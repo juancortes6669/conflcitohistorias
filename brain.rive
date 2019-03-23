@@ -1,0 +1,1289 @@
+> begin
+
+  // If we don't know their name, set the new_user topic and continue.
+  + request
+  * <get met> == undefined => <set met=true>{topic=new_user}{ok}
+  - {ok}
+
+< begin
+
+> topic new_user
+
+  + *
+  - Hola \n
+  ^ Como te llamas?{topic=asked_name}
+
+< topic
+
+> topic asked_name
+
+  + #
+  - Tu nombre es un numero?
+
+  + *
+  - Solo quiero saber tu primer nombre.
+
+  + _
+  - <set name=<formal>>Mucho gusto, <get name>{topic=random}
+
+< topic
+
++ [*] (quien|eres|como|nombre|completo|que|haces|hace) [*]
+  - Soy Darla Cristina González activista de derechos humanos y militante \n
+  ^ transgénero. Fuí reclutada forzosamente por las FARC cuando tenía 14 años
+
+  + [*]
+- quieres conocer mi historia?
+- Te gustaria conocer mi historia?
+
++ [*] (si|no|ok) [*]
+% te gustaria conocer mi historia
+* <star> == si => Soy Darla Cristina González activista de derechos humanos y militante \n
+^ transgénero. Fuí reclutada forzosamente por las FARC cuando tenía 14 años {topic=darla}
+* <star> == ok => Soy Darla Cristina González activista de derechos humanos y militante \n
+^ transgénero. Fuí reclutada forzosamente por las FARC cuando tenía 14 años {topic=darla}
+* <star> == no => no answer
+- default, shouldn't happen answer
+
++ [*] (si|no) [*]
+% quieres conocer mi historia
+* <star> == si => Soy Ingrid Sinisterra, tengo 16 años {topic=ingrid}
+* <star> == no => no answer
+- default, shouldn't happen answer
+
+
+
+// aca pongo los topics correspondientes a la primera respuesta
+
+> topic ingrid
+
+  // "otro tema" el algoritmo busca esta palabra para salir del topic //paramilitarismo
+
+
+  + [*] (otro tema) [*]   // esta frase será el password para salir del topic
+
+ - ok, pasemos a otro tema {topic=random} // esta es la respuesta cuando el usuario pone //“otro tema”, esa frase se puede modificar.
+  + [*] que es * [*]
+  - acá encuentras definiciones, hablemos de otra cosa nosotros: <a href="http://google.com/search?q=<star>">Click Here</a>
+
++ [*] (como|que|paso|cuando|secuestro|secuestraron|por|que|quien) [*]
+  - De verdad quieres que te cuente lo que paso?
+
+  + [*] (si|no|ok) [*]
+   * <star> == si => me asesinaron el 24 de agosto de 2007 en
+   ^ Buenaventura, departamento del Valle del Cauca. Mis familiares acudieron a
+   ^ reclamar a los paramilitares que les entregaran el cuerpo.
+^ habían abierto el vientre, le habían sacado los órganos y lo habían arrojado al
+^ mar. Ese mismo día la familia logró rescatar del mar el cuerpo, que
+^ presentaba múltiples heridas de arma blanca, y el 27 de agosto le dieron
+^ sepultura.Mi historia no es la unica. {topic=mujer}
+   * <star> == no => no answer
+    - default, shouldn't happen answer
+
++ *
+- Hacia las 3 de la tarde del 24 de agosto de 2007, Salí del colegio con una compañera de estudio y se fue caminando por el
+^ Barrio de nombre Bajo Firme.
+
+- fui fue secuestrada por paramilitares en el departamento del Valle del Cauca exactamente en
+^ Buenaventura, departamento del Valle del Cauca.
+
+- Quieres que te cuente lo que me paso?
+
+
++ [*] (sexual|mujer|sexo|sexual|guerra|niña|mujeres|diversidad|discriminacion) [*] // //cualquier //palabra activa el tema
+
+- vamos a hablar de violencia de genero.{topic=mujer}
+
+> topic mujer
++ que es *
+- acá encuentras definiciones, hablemos de otra cosa nosotros: <a href="http://google.com/search?q=<star>">Click Here</a>
+  // "otra cosa" el algoritmo busca esta palabra para salir del topic //paramilitarismo
+  + [*] (otro tema) [*]   // esta frase será el password para salir del topic
+
+  - ok, pasemos a otra cosa{topic=random} // esta es la respuesta cuando el usuario pone //“otro tema”, esa frase se puede modificar.
+
+- La violencia contra las mujeres y sectores LGBT en los más de 50 años de conflicto armado en \n
+^ Colombia no fue aislada. Entender las razones detrás de este tipo de hechos es esencial \n
+^ para la no repetición.
+
++ [*] (cifras|datos|estadísticas|fuentes|censo|cálculo|catastro|patrón|mujeres|numeros) [*] // //cualquier //palabra activa el tema
+
+- Entre 1958 y 2017 un total de 15.076 personas fueron víctimas de violencia sexual; el 91,6% eran mujeres.
+- Más de 800 mil mujeres fueron víctimas de violencia sexual en el conflicto armado,\n
+ ^ La cifra la arrojó una encuesta realizada en 29 departamentos del país, \n
+ ^ con el apoyo de Oxfam y 14 organizaciones de mujeres y de derechos humanos.\n
+ ^ En total, fueron entrevistadas mujeres de 142 municipios. fuente semana.com
+
+- Entre 2010 y 2015, cada hora 16 mujeres fueron víctimas de violencia sexual en el país, en el marco del conflicto armado. En total, lo fueron 875.437 mujeres de 142 municipios de Colombias.fuente encuesta oxfam.org Agosto de 2017
+
++ [*] (enfoque|genero|feminismo|analisis|herramienta|herramientas|estereotipos|imaginarios) [*] // //cualquier //palabra activa el tema
+
+- El enfoque de género, como herramienta de análisis, pone en evidencia las situaciones de \n
+^ discriminación y desigualdad que aquejan a las mujeres, así como los estereotipos e \n
+^ imaginarios que a través de la cultura influyen en la percepción de los roles a \n
+^ desempeñar por los géneros.
+
+- Es una categoría de análisis que permite evidenciar cómo los valores, actitudes \n
+^ y normas que conforman los géneros obedece a una construcción social y no biológica \n
+^ que repercute en los comportamientos e imaginarios adscritos a una sociedad patriarcal, \n
+^ en la que las formas binarias hombres/mujeres, masculino/ femenino, se encuentran en \n
+^ desigualdad e inequidad.
+
+- En el proceso judicial, la cultura patriarcal también se encuentra presente en la legislación y en la interpretación del derecho, permeando la valoración de las pruebas y la facultad del juez o jueza para llegar a la formación del libre convencimiento, por lo cual mediante el debido proceso con enfoque de género se busca garantizar una decisión judicial que no dé eco a los prejuicios sociales y culturales y que, por el contrario, contribuya a la superación de los patrones de discriminación hacia las mujeres.
+
++ [*] (historia|histórico|proceso|proceso historico|procesos|discriminación|poder|relaciones|relacion|relacion|genero) [*] // //cualquier //palabra activa el tema
+
+- En el ámbito interamericano, la Convención Belém do Pará señala que la violencia contra la \n
+^ mujer es “una manifestación de las relaciones de poder históricamente desiguales entre mujeres \n
+^ y hombres” y reconoce que el derecho de toda mujer a una vida libre de violencia incluye \n
+^ el derecho a ser libre de toda forma de discriminación.
+
+
++ [*](patriarcado|sistema|patriarcal|machismo|igualdad) [*] // //cualquier //palabra activa el //tema
+
+- El patriarcado es un sistema multicausal de opresión a las mujeres, que las ubica \n
+^ en posición de desigualdad frente al colectivo de los hombres. El orden patriarcal \n
+^ se caracteriza por su universalidad, manifestada en modos distintos, y longevidad, \n
+^ a lo largo de la historia de la humanidad. Se expresa mediante dos estrategias \n
+^ principales: el patriarcado de coerción que hace uso de la presión y la fuerza \n
+^ para oprimir a las mujeres (política legislativa) y el patriarcado de consentimiento \n
+^ en el cual, pese a existir la igualdad formal, se reproducen estructuras fundamentales \n
+^ que reiteran la desigualdad (modelación del deseo)
+
+
++ [*] (violencia|genero|actos|violentos|derechos|humanos) [*] // //cualquier //palabra activa el //tema
+
+- De conformidad con la jurisprudencia de la CIDH, la violencia basada en género \n
+^ es aquella que se da con base en el desequilibrio de poder existente en las \n
+^ relaciones de género. La Comisión Interamericana de Derechos Humanos ha \n
+^ recordado que una persona que goza de igual protección y reconocimiento ante \n
+^ la ley está facultada para actuar a fin de asegurar otros derechos ante actos \n
+^ públicos o privados. A la inversa, la discriminación de género dificulta o anula \n
+^ la capacidad de la mujer para ejercer libre y plenamente sus derechos y da lugar \n
+^ a una serie de consecuencias.
+
+
+- La violencia contra la mujer se define por la legislación como “cualquier acción u omisión, \n
+^ que le cause muerte, daño o sufrimiento físico, sexual, psicológico, económico o patrimonial \n
+^ por su condición de mujer, así como las amenazas de tales actos, la coacción o la privación \n
+^ arbitraria de la libertad, bien sea que se presente en el ámbito público o en el privado”
+
++ [*] (crimen|guerra|guerrero|sexual|sexo|esclavitud|embarazo|violacion) [*] // //cualquier //palabra activa el //tema
+
+- El artículo 8 del Estatuto de Roma de la CPI señala que “la Corte tendrá competencia respecto \n
+^ a los crímenes de guerra en particular cuando se cometan como parte de un plan o política o \n
+^ como parte de la comisión a escala de tales crímenes” (numeral 1, artículo 8). Además, \n
+^ señala que dentro de los crímenes de guerra se encuentra “cometer actos de violación, \n
+^ esclavitud sexual, embarazo forzado […] esterilización forzada y cualquier otra forma \n
+^ de violencia sexual que también constituya una infracción grave a los convenios de \n
+^ Ginebra (literal b, xxiii, numeral 2, art. 8)
+
+- La violencia sexual es quizás la violencia más olvidada y silenciada entre los \n
+^ repertorios de violencia empleados por los actores armados. Ningún actor armado \n
+^ admite con franqueza haber violado, acosado o prostituido forzadamente a una víctima. \n
+^ Es mucho más fácil confesar el despojo, el desplazamiento forzado e incluso el asesinato, \n
+^ pero sobre la violencia sexual impera un profundo sentido moral que la convierte en un \n
+^ crimen horrendo, que denota, no la inhumanidad de las víctimas, sino la de los victimarios \n
+^ fuente : verdadabierta.com
+
++ [*] (jurisprudencia|violencia|ley|leyes|corte|constitucional|ministerio|gobierno|legislativo|patrones|patron) [*] // //cualquier //palabra activa el //tema
+
+- Los desarrollos legislativos y jurisprudenciales que se han adelantado en Colombia \n
+^ sobre violencia sexual contra la mujer en el conflicto armado se encuentran \n
+^ principalmente en los Autos 092 de 2008, 098 de 2013 y 009 de 2015 expedidos \n
+^ por la Corte Constitucional, así como en las leyes 1257 de 2008, 1448 de 2011, \n
+^ 1719 de 2014, y 1761 de 2015, que se explicarán brevemente más adelante. \n
+^ Por su parte, el Ministerio de Salud ha desarrollado el Modelo de Atención \n
+^ Integral en Salud para Víctimas de Violencia Sexual que pretende garantizar \n
+^ los derechos de las víctimas, guiando a los funcionarios estatales en la forma \n
+^ adecuada para la atención con enfoque diferencial y de género.
+
+
++ [*] (interesante|bueno|cuenteme|masentiendo)[*]
+
+
+- Existen patrones de discriminación contra las personas con identidad de género, \n
+^ y orientación sexual diversa, incrementados por el conflicto armado y el desplazamiento \n
+^ forzado. Estos se demuestran en actos de violencias que visibilizan rasgos de \n
+^ intolerancia y aversión social, como ataques, hostigamientos y persecuciones \n
+^ dirigidas a castigar el ejercicio del libre desarrollo de la personalidad.
+
+
+
++ [*] (patrones|patron|cuales|protitucion|embarazo|aborto) [*]
+
+- Los actores armados imponen roles de género históricamente asignados a hombres \n
+^ y mujeres, con la amenaza y perpetración de castigos frente a su desobediencia.\n
+
+- En total, el estudio recoge datos de ocho tipos de violencia: la violación, \n
+^ la prostitución, el embarazo, el aborto, la esterilización forzada, el acoso sexual,\n
+^ los servicios domésticos forzados y la regulación de la vida social y afectiva. \n
+^ Al cotejar la información recopilada de las encuestas, los investigadores \n
+^ establecieron que el la violencia más frecuente es la de la regulación de la vida\n
+^ social y afectiva (64,2%), seguida de el acoso sexual (45,2%) y, en tercer lugar, \n
+^ la violación (16,8%). fuente semana.com
+
+
+- Los números muestran que los grupos los ilegales son los mayores agresores de \n
+^ los diferentes tipos de violencia sexual. La fuerza pública ha perpetrado \n
+^ fundamentalmente acoso sexual (6%), servicio doméstico forzado (7%) y violación (1%); \n
+^ otros actores no determinados han incurrido en acoso sexual (15%) y violación (19%). \n
+
+
+- El 78% de las mujeres que manifestaron ser víctimas de violencia sexual no \n
+^ denunciaron los hechos” y esto quiere decir que aproximadamente 620.418 mujeres \n
+^ no denunciaron que fueron víctimas de violencia sexual. FUENTE OXFAM
+
++ [*] (afro|afrodescendientes|minoria|minoritario) [*]
+
+- las mujeres afrodescendientes, con edades que oscilan entre los 15 y los \n
+ ^ 24 años y que pertenecen al estrato uno, se encuentran más expuestas a ser \n
+ ^ víctimas de violencia sexual que las mujeres con otras características. \n
+ ^ FUENTE OXFAM
+
++ [*] (denuncias|denunciar)
+
+- ¿Por qué esas más de 620 mil mujeres no denunciaron lo ocurrido?, \n
+^ fue una pregunta que contestaron con franqueza: el 24% dijo que por miedo a \n
+^ represalias; al 23,3% no le interesó y prefirió guardar silencio; el 12,2% no \n
+^ confía en la justicia; el 9% no quería que sus familiares supieran; y el 6% no \n
+^ supo cómo hacerlo. FUENTE OXFAM
+
+
++ [*] (lgbti|lgbt|cualesllesbianaslgbtiq|homosexual|gaylbisexualldiversidad|diverso|discriminacion|marica|maricon) [*]
+
+
+- 10 de mayo de 2003: el paramilitar alias el Oso organizó una pelea de boxeo \n
+^ en el corregimiento Alto de Julio (Sucre), en la que 16 jóvenes gais fueron \n
+^ obligados a subir al ring y combatir entre ellos más de 14 veces con el fin \n
+^ de “entretener”, como si se tratara de un circo, a los asistentes.\n
+
+- 12 de enero de 2002: Mama Mía, una mujer trans, fue asesinada, desmembrada \n
+^ y arrojada al río Magdalena por las Autodefensas Campesinas de Puerto Boyacá \n
+^ (ACPB).
+
+- 1998-2002: las Farc impusieron en Meta y Caquetá la prueba de VIH y \n
+^ forzaron a miembros de la comunidad LGBTI a salir de sus casas y \n
+^ establecimientos para practicársela.
+
+- Reconocer públicamente la orientación sexual y la identidad de género en las \n
+^ zonas de conflicto armado fue y sigue siendo para las personas LGBTI casi \n
+^ una sentencia de muerte, persecución o desplazamiento. Los grupos al margen \n
+^ de la ley no sólo han arrasado con poblaciones enteras, sino que han impuesto \n
+^ una sola forma de orientación sexual: la heterosexualidad.
+
+- Salirse de esos moldes implica recibir “medidas correctivas” que son aplicadas, \n
+^ en su mayoría, en los espacios públicos. Apaleamiento, violaciones sexuales \n
+^ y asfixia mecánica son algunas de las atrocidades cometidas con más frecuencia \n
+^ contra esta comunidad, según Colombia Diversa. Además victimizan a quienes \n
+^ por miedo a correr con la misma suerte se quedan en el clóset ocultando su \n
+^ identidad de género. “Una de las características de la violencia por prejuicio \n
+^ es que no afecta únicamente a las víctimas directas; envía un mensaje de \n
+^ intimidación y rechazo”, explica Marcela Sánchez, directora de esa organización. \n
+
+- Infundir ese miedo replica un mensaje que entre susurros se conoce como \n
+^ “a mayor visibilidad, mayor riesgo”, agrega Wilson Castañeda, director \n
+^ de Caribe Afirmativo. El número de esas víctimas indirectas LGBTI por culpa \n
+^ de la guerra es incierto, entre otras cosas porque aún hay personas que \n
+^ ocultan su orientación sexual y porque es un estudio que aún no se ha dado \n
+^ en el país.
+
+- “Las Farc me reclutaron y no podía decir que era gay” \n
+^ En la antesala de sus 15 años, Darla Cristina González Arias, en ese entonces \n
+^ Cristian Camilo González, vio mientras jugaba en una cancha de San Luis \n
+^ (Antioquia) que guerrilleros del frente 9 de las Farc descendían de una \n
+^ camioneta y fijaban su mirada en él. “Yo estaba con dos amigos. \n
+^ Nos dijeron: ‘Nos vamos’. Subimos al carro, nos llevaron hasta Granada \n
+^ y caminamos más de 12 horas hasta una escuela de formación de la guerrilla. \n
+^ Ahí recibimos, durante cinco meses, entrenamiento militar sobre la ideología \n
+^ política de las Farc y el manejo de armas. Había restricciones en la comida,\n
+^ un tiempo para bañarnos y un día a la semana de descanso”, recuerda González. \n
+^ Aunque no le pusieron un revólver en la cabeza, reconoce que le \n
+^ “trabajaron mucho tiempo la cabeza. Las Farc eran el ejército del pueblo \n
+^ que nos enseñaba que la lucha era justa y por el campesinado”. Desde que es \n
+^ consciente, asegura que se sintió atraída por los hombres. En silencio, era \n
+^ un niño gay en el campo, “donde a todos les gustaban las niñas y yo creía que \n
+^ era el único con esas características ‘extrañas’”.
+
+- Tanto los ilegales como la sociedad condenaban estas orientaciones. \n
+^ Cuando en el entrenamiento alguien mostraba signos de debilidad lo llamaban \n
+^ “marica”. “Eso era una forma prerrogativa de referirse al homosexualismo. \n
+^ A un chico del pueblo, que era profesor de danza y abiertamente gay, lo \n
+^ mataron y lo dejaron a la orilla del río, y todo el mundo decía que lo habían \n
+^ matado por ‘marica’, en una limpieza social. Siempre ha existido esa forma \n
+^ de justificación y victimización”.
+
+- Cuando estaba listo para el combate, a Cristian le dieron la oportunidad \n
+^ de visitar a sus padres, pero pasó de largo y escapó a Cali (Valle), \n
+^ donde vivió en la calle por dos meses. Al desertar, las Farc le prohibieron \n
+^ a su familia salir del pueblo mientras se comprobaba que el menor no se \n
+^ hubiera aliado con el Eln, los paramilitares o el Ejército. \n
+^ Hasta que Cristian fue visto en un parque de Buenaventura (Valle), \n
+^ vendiendo Bon Ice en una esquina, sus padres y dos hermanas no vivieron \n
+^ sin la sombra de las Farc. Comprobar que “no estaba haciendo algo malo” \n
+^ constituyó sus boletos de libertad.
+
+- Antes de cumplir 18 años, el joven se había desplazado por Pereira, \n
+^ Armenia, Manizales, Cartago y Bucaramanga, donde un día leyendo un \n
+^ periódico se encontró con un anuncio para adultos que solicitaban personal. \n
+^ Así terminó en una casa de prostitución y comenzaría a ejercer como \n
+^ trabajador sexual en la calle, hasta un lustro. Hoy, a sus 30 años y \n
+^ reconocida como mujer trans, Darla aspira al Concejo de Pasto y es la \n
+^ coordinadora de la Mesa de Participación Efectiva de Víctimas en Nariño.
+
+- Ahora, desde su papel como defensora de derechos de las víctimas LGBTI \n
+^ y con siete amenazas en contra, afirma que pertenecer a esa comunidad \n
+^ sigue siendo un riesgo en las zonas de conflicto. “Muchas personas que \n
+^ aún viven en el campo siguen ocultando su identidad de género y orientación \n
+^ sexual por temor a represalias. Hay gente gay que se casa con heterosexuales \n
+^ y tienen hijos, porque desde el púlpito se enseña que lo normal es procrear. \n
+^ He conocido personas que han salido del clóset a los 30 años porque antes \n
+^ no podían, las mataban”.“Me tengo que restringir en la calle”
+
+- La crueldad del conflicto golpeó por primera vez a la familia de Bryan Yuseth \n
+^ Archbold Valle cuando éste tenía 16 años. Su padre, quien vivía en Santa Marta \n
+^ y trabajaba como vigilante de seguridad en una lotería, fue asesinado \n
+^ junto a otros empleados por los Paisas. A la par, en Soledad (Atlántico), \n
+^ donde Archbold ha residido con su mamá, los LGBTI eran blanco de intimidaciones \n
+^ por medio de panfletos. Debido a esto, Bryan ocultó que era bisexual hasta \n
+^ los 19 años, cuando ingresó a la Universidad del Atlántico a estudiar \n
+^ sociología.
+
+- “Las amenazas han sido firmadas por los Rastrojos, las Auc, siempre varía. \n
+^ Después de las 9:30 p.m. una persona LGBTI corre riesgo en la calle. \n
+^ Cuando estoy con mi pareja trato de no ser tan visible y actuar como \n
+^ los demás quieren que actúe. No me agarro de mano con mi novio y no nos \n
+^ besamos en público. Hace poco, a una trans la degollaron en un barrio \n
+^ cerca a mi casa frente a todo el mundo como a las 5:00 a.m.”, dice Archbold.
+
+
+- Durante el 2008 y el 2009 se siguieron presentando hechos de violencia y \n
+^ discriminación por parte de actores armados a personas LGBTI, según lo \n
+^ informó la Oficina del Alto Comisionado de Naciones Unidas para los Derechos \n
+^ Humanos A. C. (2010): “Entre febrero y marzo circularon panfletos con amenazas \n
+^ en por lo menos 24 de los 32 departamentos del país. Un formato estándar \n
+^ fue distribuido en poco más de dos semanas, en lugares tan distantes como \n
+^ Armenia, Barranquilla, Bogotá, Choco, Cúcuta, Medellín y Valle del Cauca. \n
+^ El documento alentaba la mal llamada “limpieza social” contra trabajadores \n
+^ sexuales, homosexuales, drogadictos y personas viviendo con VIH, entre \n
+^ otros.”
+
+- Uno de los panfletos que también circularon durante este periodo \n
+^ decía textualmente según Caballero (2009): “Señores Administradores: Este \n
+^ comunicado es con el fin de informarles que no queremos volver a ver maricas \n
+^ y prostitutas en la puerta de su negocio ni que les den servicio, si no \n
+^ cumplen esta orden en un tiempo límite de 3 días aténgacen (sic) a las \n
+^ consecuencias que recaerán sobre ustedes. Grupo de Limpieza Cazano”. \n
+^ Miembros de grupos paramilitares desmovilizados han amenazado a miembros \n
+^ de la población LGBTI por ejemplo “En Cúcuta, el 5 de septiembre, se reportó \n
+^ una amenaza contra las travestis que ejercen prostitución en la zona céntrica \n
+^ de la ciudad y su posteriormente el asesinato de tres de ellas” (Radio, 2010).
+
++ [*]
+
+-  La violencia contra las mujeres y sectores LGBT en los más de 50 años de conflicto armado en \n
+^ Colombia no fue aislada. Entender las razones detrás de este tipo de hechos es esencial \n
+^ para la no repetición.
+
+-  Quieres conocer cifras exactas de la violencia contra la mujer o prefieres hablar de la discriminacion en el conflicto?
+
+
+< topic
+
+> topic darla
++ que es *
+- acá encuentras definiciones, hablemos de otra cosa nosotros: <a href="http://google.com/search?q=<star>">Click Here</a>
+  // "otro tema" el algoritmo busca esta palabra para salir del topic //paramilitarismo
+  + [*] (otro tema) [*]   // esta frase será el password para salir del topic
+
+  - ok, pasemos a otro tema {topic=random} // esta es la respuesta cuando el usuario pone //“otro tema”, esa frase se puede modificar.
+
++ [*] (juicio|guerra) [*]
+
+  - En un juicio de guerra de las FARC, una persona se sienta frente a toda
+  ^ la tropa y les preguntan uno por uno supuestamente una
+  ^ forma democrática si estaba que se aplica una sanción o
+  ^ un ajusticiamiento.
+
++ [*] (paramilitares|paramilitar|convivir|auc|paracos|paras|paramilitarismo) [*] // //cualquier palabra activa el tema
+
+- vamos a hablar de paramilitarismo.{topic=paramilitarismo}
+
+  + [*] (gay|genero|sexual|mujer|trans|lgbti|lgbt|sexo|sexual|mujeres|diversidad|discriminacion) [*]
+- Te gustaria conocer mas sobre mi historia y la de la poblacion lgbti en el conflicto armado colombiano?
+
++ [*] (si|no) [*]
+* <star> == si => - Yo vivía en San Luis, Antioquia,  teníamos que caminar dos horas para salir
+  ^ al casco urbano de San Luis. Cuando cumplí 13 años yo entiendo que soy un niño
+  ^ diferente a los demás ni siquiera sabía que era gay porque nunca había visto
+  ^ otra persona como yo. Yo pensaba que era único en el mundo pequeño mundo.
+  ^ Ni siquiera había televisión donde vivíamos no había electricidad, no había
+  ^ carretera. Yo no tenía un referente de que era ser gay. Quieres saber mas sobre mi?{topic=genero}
+* <star> == no => no answer
+- default, shouldn't happen answer
+
+ + [*] (patrones|patron|cuales|protitucion|embarazo|aborto|cifras) [*]
+
+  - Los actores armados imponen roles de género históricamente asignados a hombres \n
+  ^ y mujeres, con la amenaza y perpetración de castigos frente a su desobediencia.\n
+
+  - En total, el estudio recoge datos de ocho tipos de violencia: la violación, \n
+  ^ la prostitución, el embarazo, el aborto, la esterilización forzada, el acoso sexual,\n
+  ^ los servicios domésticos forzados y la regulación de la vida social y afectiva. \n
+  ^ Al cotejar la información recopilada de las encuestas, los investigadores \n
+  ^ establecieron que el la violencia más frecuente es la de la regulación de la vida\n
+  ^ social y afectiva (64,2%), seguida de el acoso sexual (45,2%) y, en tercer lugar, \n
+  ^ la violación (16,8%). fuente semana.com
+
+
+  - Los números muestran que los grupos los ilegales son los mayores agresores de \n
+  ^ los diferentes tipos de violencia sexual. La fuerza pública ha perpetrado \n
+  ^ fundamentalmente acoso sexual (6%), servicio doméstico forzado (7%) y violación (1%); \n
+  ^ otros actores no determinados han incurrido en acoso sexual (15%) y violación (19%). \n
+
+
+  - El 78% de las mujeres que manifestaron ser víctimas de violencia sexual no \n
+  ^ denunciaron los hechos” y esto quiere decir que aproximadamente 620.418 mujeres \n
+  ^ no denunciaron que fueron víctimas de violencia sexual. FUENTE OXFAM
+
+  + [*] (cifras|datos|estadísticas|fuentes|censo|cálculo|catastro|patrón|mujeres|numeros) [*] // //cualquier //palabra activa el tema
+
+  - Entre 1958 y 2017 un total de 15.076 personas fueron víctimas de violencia sexual; el 91,6% eran mujeres.
+  - Más de 800 mil mujeres fueron víctimas de violencia sexual en el conflicto armado,\n
+   ^ La cifra la arrojó una encuesta realizada en 29 departamentos del país, \n
+   ^ con el apoyo de Oxfam y 14 organizaciones de mujeres y de derechos humanos.\n
+   ^ En total, fueron entrevistadas mujeres de 142 municipios. fuente semana.com
+
+  - Entre 2010 y 2015, cada hora 16 mujeres fueron víctimas de violencia sexual en el país, en el marco del conflicto armado. En total, lo fueron 875.437 mujeres de 142 municipios de Colombias.fuente encuesta oxfam.org Agosto de 2017
+
+  + *
+
+
+  - Yo vivía en San Luis, Antioquia,  teníamos que caminar dos horas para salir
+  ^ al casco urbano de San Luis. Cuando cumplí 13 años yo entiendo que soy un niño
+  ^ diferente a los demás ni siquiera sabía que era gay porque nunca había visto
+  ^ otra persona como yo. Yo pensaba que era único en el mundo pequeño mundo.
+  ^ Ni siquiera había televisión donde vivíamos no había electricidad, no había
+  ^ carretera. Yo no tenía un referente de que era ser gay.
+
+  - Cuando tenía 14 años recibí la primera comunión, fue en esa época en que mi
+  ^ pequeño paraíso se empezó a convertir en un gran infierno. Conocí el conflicto
+  ^ armado que hace muchos años existía en Colombia y que yo no conocía.
+  ^ La violencia empezó a entrar en nuestras vidas y todo nuestro territorio
+  ^ de la peor forma.quieres que te cuente sobre el paramilitarismo o sobre las cifras de violencia lgbti?
+
+  - Puedo hablarte sobre el conflicto armado colombiano?
+
++ [*] (si|no) [*]
+% puedo hablarte sobre el conflicto armado colombiano
+* <star> == si => Voy a contarte sobre los paramilitares y el conflicto armado colombiano{topic=paramilitarismo}
+* <star> == no => En nuestro municipio habían cuatro grupos armados, el ELN, las FARC,
+  ^ los PARAMILITARES  y las fuerzas del estado que son ejército y policía.
+  ^ Esto porque San Luis es un camino  estratégico a otras regiones,
+  ^ habían confrontaciones muy fuertes, mejor dicho, ahí conocí cómo
+  ^ sonaban las balas y hubo combates en los que estuve yo sola con
+  ^ mis hermanas en la casa mi papá trabajando y lo único que yo
+  ^ intentaba era cubrir a mis hermanas, yo pensaba que sí yo las abrazaba
+  ^ no les pasaría nada. quieres que te cuente sobre los paramilitares o sobre las cifras de violencia lgbti?
+- default, shouldn't happen answer
+
+
+  - En nuestro municipio habían cuatro grupos armados, el ELN, las FARC,
+  ^ los PARAMILITARES  y las fuerzas del estado que son ejército y policía.
+  ^ Esto porque San Luis es un camino  estratégico a otras regiones,
+  ^ habían confrontaciones muy fuertes, mejor dicho, ahí conocí cómo
+  ^ sonaban las balas y hubo combates en los que estuve yo sola con
+  ^ mis hermanas en la casa mi papá trabajando y lo único que yo
+  ^ intentaba era cubrir a mis hermanas, yo pensaba que sí yo las abrazaba
+  ^ no les pasaría nada. quieres que te cuente sobre los paramilitares o sobre las cifras de violencia lgbti?
+
++ [*] (paramilitares|paramilitar|convivir|auc|paracos|paras|paramilitarismo) [*] // //cualquier palabra activa el tema
+
+- vamos a hablar de paramilitarismo.{topic=paramilitarismo}
+
+
+- Como los diferentes actores armados pasaban por nuestras tierras
+  ^ y teníamos contacto directo o indirecto o voluntario o involuntario
+  ^ (porque nos pedían comida o insumos) Terminamos relacionados
+  ^ como colaboradores de los grupos, de hecho dividieron a los
+  ^ campesinos del pueblo en colaboradores de determinado grupo.
+  ^ Un día, después de un combate apareció un campesino de nuestra
+  ^ Vereda muerto. Cuando volvió la guerrilla nos dieron dos opciones.
+  ^ O nos unimos a los paramilitares o nos tenían que matar por temor
+  ^ a que soltaramos información a la policía.  Prefieres hablar de las cifras o de los patrones de violencia de genero en el conflicto armado de Colombia?
+
+  - Fue una guerra inhumana, principalmente porque muchos en mi
+  ^ pueblo terminamos dentro de los grupos armados, terminamos
+  ^ peleando entre familiares.
+
+
+  - Supe que tenía que desertar cuando me di cuenta reglamento interno
+  ^ de que era prohibido que me gustaran otros hombres. Yo entendí
+  ^ que si a mí me descubren  me harían un juicio de guerra
+
+
+  - Si me encontraban homosexual me asesinaran. Esto me llevó a
+  ^ ser muy estratégica y  no dejarme pillar. La única forma para
+  ^ escapar era con su permiso una vez terminado el período de formación
+  ^ yo me había ganado la confianza de la enfermera del comandante de
+  ^ la escuela y del grupo como tal y pedí que me dejaran ir a visitar a
+  ^ mi familia pero yo no llegue hasta mi familia sino que tome otro rumbo
+  ^ y hui.
+
+  //donde  - destino familia Y cuál fue el destino de tu familia
+
+  - Cuando huí de las FARC, retuvieron a mi familia hasta que supieran dónde
+  ^ estaba yo porque el temor era que yo me hubiese ido al ejército
+  ^ a la policía oa los paramlitares. Viaje de Buenaventura a Cali,
+  ^ dodne me encontraron los bloques urbanos de las FARC. Me salvó
+  ^ que yo en ese momento trabajaba como vendedor ambulante y era
+  ^ responsable de mi hermana menor. Por eso no me mataron. quieres que te cuente sobre los paramilitares o sobre las cifras de violencia lgbti?
+
+//  lgbti
+
+   - el conflicto armado ha golpeado mucho a la población lgbt.
+  ^  Muchos grupos armados ponen panfletos y comunicaciones sobre
+   ^ amenazas y limpiezas sociales hacia la población lgbti Diciendo
+   ^ que deben salir del territorio en el menor tiempo posible porque
+   ^ no van a permitir que sigamos viviendo aquí. Si bien es cierto
+   ^ que Colombia dio un paso  gigante frente al tema de acabar el conflicto
+   ^ aún el conflicto está muy activo en este país
+
+//  que confeso?
+
+  - En el 2015, años después de huir de las FARC, yo me habia convertido en una lideresa de la
+  ^ comundiad lgbti en el conflicto. El  día de la madre de ese año mi madre
+  ^ fue a visitarme y me confeso algo que había guardado por muchos años
+
+-  Mi mamá contó que ella también fue víctima también de violencia sexual
+^ por los paramilitares en razón de que tenía un “hijo guerrillero”
+^ Cuando digo yo no fui yo la peor parte de todo este historial a cargo
+^ mi mamá que mi mamá tenga más del 50% de Navidad permanente para trabajar
+^ por daño psiquiatra y no supiste recién en 2015 y ahí yo tomo la decisión
+^ de decir definitivamente han sufrido el conflicto armado interno en contar
+^ su historia reconstruir la verdad
+
+
+ + [*] (reclutamiento|forzado|niños|joven|pequeño|pequeña|reclutada|reclutaron|recluto) [*]
+
+  - Como los diferentes actores armados pasaban por nuestras tierras
+  ^ y teníamos contacto directo o indirecto o voluntario o involuntario
+  ^ (porque nos pedían comida o insumos) Terminamos relacionados
+  ^ como colaboradores de los grupos, de hecho dividieron a los
+  ^ campesinos del pueblo en colaboradores de determinado grupo.
+  ^ Un día, después de un combate apareció un campesino de nuestra
+  ^ Vereda muerto. Cuando volvió la guerrilla nos dieron dos opciones.
+  ^ O nos unimos a los paramilitares o nos tenían que matar por temor
+  ^ a que soltaramos información a la policía.{topic=reclutamiento}
+
+
+  > topic genero
+
+    // "otra cosa" el algoritmo busca esta palabra para salir del topic //paramilitarismo
+    + [*] (otra cosa) [*]   // esta frase será el password para salir del topic
+
+    - ok, pasemos a otra cosa{topic=random} // esta es la respuesta cuando el usuario pone //“otro tema”, esa frase se puede modificar.
+
+
+
+  + * // la primera respuesta del usuario puede ser..
+
+  - Yo vivía en San Luis, Antioquia,  teníamos que caminar dos horas para salir
+  ^ al casco urbano de San Luis. Cuando cumplí 13 años yo entiendo que soy un niño
+  ^ diferente a los demás ni siquiera sabía que era gay porque nunca había visto
+  ^ otra persona como yo. Yo pensaba que era único en el mundo pequeño mundo.
+  ^ Ni siquiera había televisión donde vivíamos no había electricidad, no había
+  ^ carretera. Yo no tenía un referente de que era ser gay.
+
+  - Cuando tenía 14 años recibí la primera comunión, fue en esa época en que mi
+  ^ pequeño paraíso se empezó a convertir en un gran infierno. Conocí el conflicto
+  ^ armado que hace muchos años existía en Colombia y que yo no conocía.
+  ^ La violencia empezó a entrar en nuestras vidas y todo nuestro territorio
+  ^ de la peor forma.
+
+  - En nuestro municipio habían cuatro grupos armados, el ELN, las FARC,
+  ^ los PARAMILITARES  y las fuerzas del estado que son ejército y policía.
+  ^ Esto porque San Luis es un camino  estratégico a otras regiones,
+  ^ habían confrontaciones muy fuertes, mejor dicho, ahí conocí cómo
+  ^ sonaban las balas y hubo combates en los que estuve yo sola con
+  ^ mis hermanas en la casa mi papá trabajando y lo único que yo
+  ^ intentaba era cubrir a mis hermanas, yo pensaba que sí yo las abrazaba
+  ^ no les pasaría nada.
+
+  - Como los diferentes actores armados pasaban por nuestras tierras
+  ^ y teníamos contacto directo o indirecto o voluntario o involuntario
+  ^ (porque nos pedían comida o insumos) Terminamos relacionados
+  ^ como colaboradores de los grupos, de hecho dividieron a los
+  ^ campesinos del pueblo en colaboradores de determinado grupo.
+  ^ Un día, después de un combate apareció un campesino de nuestra
+  ^ Vereda muerto. Cuando volvió la guerrilla nos dieron dos opciones.
+  ^ O nos unimos a los paramilitares o nos tenían que matar por temor
+  ^ a que soltaramos información a la policía.
+
+  - La guerra que vivi fue inhumana, principalmente porque muchos en mi
+  ^ pueblo terminamos dentro de los grupos armados, terminamos
+  ^ peleando entre familiares.
+
+
+  - Supe que tenía que desertar de las FARC cuando me di cuenta reglamento interno
+  ^ de que era prohibido que me gustaran otros hombres. Yo entendí
+  ^ que si a mí me descubren  me harían un juicio de guerra
+
+  - Si me encontraban homosexual me asesinaran. Esto me llevó a
+  ^ ser muy estratégica y  no dejarme pillar. La única forma para
+  ^ escapar era con su permiso una vez terminado el período de formación
+  ^ yo me había ganado la confianza de la enfermera del comandante de
+  ^ la escuela y del grupo como tal y pedí que me dejaran ir a visitar a
+  ^ mi familia pero yo no llegue hasta mi familia sino que tome otro rumbo
+  ^ y hui.
+
+  //donde  - destino familia Y cuál fue el destino de tu familia
+
+  - ellos mismos retuvieron a mi familia hasta que supieran dónde
+  ^ estaba yo porque el temor era que yo me hubiese ido al ejército
+  ^ a la policía oa los paramlitares. Viaje de Buenaventura a Cali,
+  ^ dodne me encontraron los bloques urbanos de las FARC. Me salvó
+  ^ que yo en ese momento trabajaba como vendedor ambulante y era
+  ^ responsable de mi hermana menor. Por eso no me mataron.
+
+//  lgbti
+
+   - el conflicto armado ha golpeado mucho a la población lgbt.
+  ^  Muchos grupos armados ponen panfletos y comunicaciones sobre
+   ^ amenazas y limpiezas sociales hacia la población lgbti Diciendo
+   ^ que deben salir del territorio en el menor tiempo posible porque
+   ^ no van a permitir que sigamos viviendo aquí. Si bien es cierto
+   ^ que Colombia dio un paso  gigante frente al tema de acabar el conflicto
+   ^ aún el conflicto está muy activo en este país
+
+//  que confeso?
+
+  - En el 2015, años después, yo me habia convertido en una lideresa de la
+  ^ comundiad lgbti en el conflicto. El  día de la madre de ese año mi madre
+  ^ fue a visitarme y me confeso algo que había guardado por muchos años
+
+-  Me contó que ella también fue víctima también de violencia sexual
+^ por los paramilitares en razón de que tenía un “hijo guerrillero”
+^ Cuando digo yo no fui yo la peor parte de todo este historial a cargo
+^ mi mamá que mi mamá tenga más del 50% de Navidad permanente para trabajar
+^ por daño psiquiatra y no supiste recién en 2015 y ahí yo tomo la decisión
+^ de decir definitivamente han sufrido el conflicto armado interno en contar
+^ su historia reconstruir la verdad
+
+  + [*] (cifras|datos|estadísticas|fuentes|censo|cálculo|catastro|patrón|mujeres|numeros) [*] // //cualquier //palabra activa el tema
+
+  - Entre 1958 y 2017 un total de 15.076 personas fueron víctimas de violencia sexual; el 91,6% eran mujeres.
+  - Más de 800 mil mujeres fueron víctimas de violencia sexual en el conflicto armado,\n
+   ^ La cifra la arrojó una encuesta realizada en 29 departamentos del país, \n
+   ^ con el apoyo de Oxfam y 14 organizaciones de mujeres y de derechos humanos.\n
+   ^ En total, fueron entrevistadas mujeres de 142 municipios. fuente semana.com
+
+  - Entre 2010 y 2015, cada hora 16 mujeres fueron víctimas de violencia sexual en el país, en el marco del conflicto armado. En total, lo fueron 875.437 mujeres de 142 municipios de Colombias.fuente encuesta oxfam.org Agosto de 2017
+
+  + [*] (enfoque|genero|feminismo|analisis|herramienta|herramientas|estereotipos|imaginarios) [*] // //cualquier //palabra activa el tema
+
+  - El enfoque de género, como herramienta de análisis, pone en evidencia las situaciones de \n
+  ^ discriminación y desigualdad que aquejan a las mujeres, así como los estereotipos e \n
+  ^ imaginarios que a través de la cultura influyen en la percepción de los roles a \n
+  ^ desempeñar por los géneros.
+
+  - Es una categoría de análisis que permite evidenciar cómo los valores, actitudes \n
+  ^ y normas que conforman los géneros obedece a una construcción social y no biológica \n
+  ^ que repercute en los comportamientos e imaginarios adscritos a una sociedad patriarcal, \n
+  ^ en la que las formas binarias hombres/mujeres, masculino/ femenino, se encuentran en \n
+  ^ desigualdad e inequidad.
+
+  - En el proceso judicial, la cultura patriarcal también se encuentra presente en la legislación y en la interpretación del derecho, permeando la valoración de las pruebas y la facultad del juez o jueza para llegar a la formación del libre convencimiento, por lo cual mediante el debido proceso con enfoque de género se busca garantizar una decisión judicial que no dé eco a los prejuicios sociales y culturales y que, por el contrario, contribuya a la superación de los patrones de discriminación hacia las mujeres.
+
+  + [*] (historia|histórico|proceso|proceso historico|procesos|discriminación|poder|relaciones|relacion|relacion|genero) [*] // //cualquier //palabra activa el tema
+
+  - En el ámbito interamericano, la Convención Belém do Pará señala que la violencia contra la \n
+  ^ mujer es “una manifestación de las relaciones de poder históricamente desiguales entre mujeres \n
+  ^ y hombres” y reconoce que el derecho de toda mujer a una vida libre de violencia incluye \n
+  ^ el derecho a ser libre de toda forma de discriminación.
+
+
+  + [*](patriarcado|sistema|patriarcal|machismo|igualdad) [*] // //cualquier //palabra activa el //tema
+
+  - El patriarcado es un sistema multicausal de opresión a las mujeres, que las ubica \n
+  ^ en posición de desigualdad frente al colectivo de los hombres. El orden patriarcal \n
+  ^ se caracteriza por su universalidad, manifestada en modos distintos, y longevidad, \n
+  ^ a lo largo de la historia de la humanidad. Se expresa mediante dos estrategias \n
+  ^ principales: el patriarcado de coerción que hace uso de la presión y la fuerza \n
+  ^ para oprimir a las mujeres (política legislativa) y el patriarcado de consentimiento \n
+  ^ en el cual, pese a existir la igualdad formal, se reproducen estructuras fundamentales \n
+  ^ que reiteran la desigualdad (modelación del deseo)
+
+
+  + [*] (violencia|genero|actos|violentos|derechos|humanos) [*] // //cualquier //palabra activa el //tema
+
+  - De conformidad con la jurisprudencia de la CIDH, la violencia basada en género \n
+  ^ es aquella que se da con base en el desequilibrio de poder existente en las \n
+  ^ relaciones de género. La Comisión Interamericana de Derechos Humanos ha \n
+  ^ recordado que una persona que goza de igual protección y reconocimiento ante \n
+  ^ la ley está facultada para actuar a fin de asegurar otros derechos ante actos \n
+  ^ públicos o privados. A la inversa, la discriminación de género dificulta o anula \n
+  ^ la capacidad de la mujer para ejercer libre y plenamente sus derechos y da lugar \n
+  ^ a una serie de consecuencias.
+
+
+  - La violencia contra la mujer se define por la legislación como “cualquier acción u omisión, \n
+  ^ que le cause muerte, daño o sufrimiento físico, sexual, psicológico, económico o patrimonial \n
+  ^ por su condición de mujer, así como las amenazas de tales actos, la coacción o la privación \n
+  ^ arbitraria de la libertad, bien sea que se presente en el ámbito público o en el privado”
+
+  + [*] (crimen|guerrero|sexual|sexo|esclavitud|embarazo|violacion) [*] // //cualquier //palabra activa el //tema
+
+  - El artículo 8 del Estatuto de Roma de la CPI señala que “la Corte tendrá competencia respecto \n
+  ^ a los crímenes de guerra en particular cuando se cometan como parte de un plan o política o \n
+  ^ como parte de la comisión a escala de tales crímenes” (numeral 1, artículo 8). Además, \n
+  ^ señala que dentro de los crímenes de guerra se encuentra “cometer actos de violación, \n
+  ^ esclavitud sexual, embarazo forzado […] esterilización forzada y cualquier otra forma \n
+  ^ de violencia sexual que también constituya una infracción grave a los convenios de \n
+  ^ Ginebra (literal b, xxiii, numeral 2, art. 8)
+
+  - La violencia sexual es quizás la violencia más olvidada y silenciada entre los \n
+  ^ repertorios de violencia empleados por los actores armados. Ningún actor armado \n
+  ^ admite con franqueza haber violado, acosado o prostituido forzadamente a una víctima. \n
+  ^ Es mucho más fácil confesar el despojo, el desplazamiento forzado e incluso el asesinato, \n
+  ^ pero sobre la violencia sexual impera un profundo sentido moral que la convierte en un \n
+  ^ crimen horrendo, que denota, no la inhumanidad de las víctimas, sino la de los victimarios \n
+  ^ fuente : verdadabierta.com
+
+  + [*] (jurisprudencia|violencia|ley|leyes|corte|constitucional|ministerio|gobierno|legislativo|patrones|patron) [*] // //cualquier //palabra activa el //tema
+
+  - Los desarrollos legislativos y jurisprudenciales que se han adelantado en Colombia \n
+  ^ sobre violencia sexual contra la mujer en el conflicto armado se encuentran \n
+  ^ principalmente en los Autos 092 de 2008, 098 de 2013 y 009 de 2015 expedidos \n
+  ^ por la Corte Constitucional, así como en las leyes 1257 de 2008, 1448 de 2011, \n
+  ^ 1719 de 2014, y 1761 de 2015, que se explicarán brevemente más adelante. \n
+  ^ Por su parte, el Ministerio de Salud ha desarrollado el Modelo de Atención \n
+  ^ Integral en Salud para Víctimas de Violencia Sexual que pretende garantizar \n
+  ^ los derechos de las víctimas, guiando a los funcionarios estatales en la forma \n
+  ^ adecuada para la atención con enfoque diferencial y de género.
+
+
+  + [*] (interesante|bueno|cuenteme|mas|ok|entiendo)[*]
+
+
+  - Existen patrones de discriminación contra las personas con identidad de género, \n
+  ^ y orientación sexual diversa, incrementados por el conflicto armado y el desplazamiento \n
+  ^ forzado. Estos se demuestran en actos de violencias que visibilizan rasgos de \n
+  ^ intolerancia y aversión social, como ataques, hostigamientos y persecuciones \n
+  ^ dirigidas a castigar el ejercicio del libre desarrollo de la personalidad.
+
+
+
+  + [*] (patrones|patron|cuales|protitucion|embarazo|aborto|cifras) [*]
+
+  - Los actores armados imponen roles de género históricamente asignados a hombres \n
+  ^ y mujeres, con la amenaza y perpetración de castigos frente a su desobediencia.\n
+
+  - En total, el estudio recoge datos de ocho tipos de violencia: la violación, \n
+  ^ la prostitución, el embarazo, el aborto, la esterilización forzada, el acoso sexual,\n
+  ^ los servicios domésticos forzados y la regulación de la vida social y afectiva. \n
+  ^ Al cotejar la información recopilada de las encuestas, los investigadores \n
+  ^ establecieron que el la violencia más frecuente es la de la regulación de la vida\n
+  ^ social y afectiva (64,2%), seguida de el acoso sexual (45,2%) y, en tercer lugar, \n
+  ^ la violación (16,8%). fuente semana.com
+
+
+  - Los números muestran que los grupos los ilegales son los mayores agresores de \n
+  ^ los diferentes tipos de violencia sexual. La fuerza pública ha perpetrado \n
+  ^ fundamentalmente acoso sexual (6%), servicio doméstico forzado (7%) y violación (1%); \n
+  ^ otros actores no determinados han incurrido en acoso sexual (15%) y violación (19%). \n
+
+
+  - El 78% de las mujeres que manifestaron ser víctimas de violencia sexual no \n
+  ^ denunciaron los hechos” y esto quiere decir que aproximadamente 620.418 mujeres \n
+  ^ no denunciaron que fueron víctimas de violencia sexual. FUENTE OXFAM
+
+  + [*] (afro|afrodescendientes|minoria|minoritario) [*]
+
+  - las mujeres afrodescendientes, con edades que oscilan entre los 15 y los \n
+   ^ 24 años y que pertenecen al estrato uno, se encuentran más expuestas a ser \n
+   ^ víctimas de violencia sexual que las mujeres con otras características. \n
+   ^ FUENTE OXFAM
+
+  + [*] (denuncias|denunciar|no denunciar)
+
+  - ¿Por qué esas más de 620 mil mujeres no denunciaron lo ocurrido?, \n
+  ^ fue una pregunta que contestaron con franqueza: el 24% dijo que por miedo a \n
+  ^ represalias; al 23,3% no le interesó y prefirió guardar silencio; el 12,2% no \n
+  ^ confía en la justicia; el 9% no quería que sus familiares supieran; y el 6% no \n
+  ^ supo cómo hacerlo. FUENTE OXFAM
+
+
+  + [*] (lgbti|lgbt|lgbtiq|homosexual|gaylbisexualldiversidad|diverso|discriminacion|marica|maricon) [*]
+
+
+  - 10 de mayo de 2003: el paramilitar alias el Oso organizó una pelea de boxeo \n
+  ^ en el corregimiento Alto de Julio (Sucre), en la que 16 jóvenes gais fueron \n
+  ^ obligados a subir al ring y combatir entre ellos más de 14 veces con el fin \n
+  ^ de “entretener”, como si se tratara de un circo, a los asistentes.\n
+
+  - 12 de enero de 2002: Mama Mía, una mujer trans, fue asesinada, desmembrada \n
+  ^ y arrojada al río Magdalena por las Autodefensas Campesinas de Puerto Boyacá \n
+  ^ (ACPB).
+
+  - 1998-2002: las Farc impusieron en Meta y Caquetá la prueba de VIH y \n
+  ^ forzaron a miembros de la comunidad LGBTI a salir de sus casas y \n
+  ^ establecimientos para practicársela.
+
+  - Reconocer públicamente la orientación sexual y la identidad de género en las \n
+  ^ zonas de conflicto armado fue y sigue siendo para las personas LGBTI casi \n
+  ^ una sentencia de muerte, persecución o desplazamiento. Los grupos al margen \n
+  ^ de la ley no sólo han arrasado con poblaciones enteras, sino que han impuesto \n
+  ^ una sola forma de orientación sexual: la heterosexualidad.
+
+  - Salirse de esos moldes implica recibir “medidas correctivas” que son aplicadas, \n
+  ^ en su mayoría, en los espacios públicos. Apaleamiento, violaciones sexuales \n
+  ^ y asfixia mecánica son algunas de las atrocidades cometidas con más frecuencia \n
+  ^ contra esta comunidad, según Colombia Diversa. Además victimizan a quienes \n
+  ^ por miedo a correr con la misma suerte se quedan en el clóset ocultando su \n
+  ^ identidad de género. “Una de las características de la violencia por prejuicio \n
+  ^ es que no afecta únicamente a las víctimas directas; envía un mensaje de \n
+  ^ intimidación y rechazo”, explica Marcela Sánchez, directora de esa organización. \n
+
+  - Infundir ese miedo replica un mensaje que entre susurros se conoce como \n
+  ^ “a mayor visibilidad, mayor riesgo”, agrega Wilson Castañeda, director \n
+  ^ de Caribe Afirmativo. El número de esas víctimas indirectas LGBTI por culpa \n
+  ^ de la guerra es incierto, entre otras cosas porque aún hay personas que \n
+  ^ ocultan su orientación sexual y porque es un estudio que aún no se ha dado \n
+  ^ en el país.
+
+  - “Las Farc me reclutaron y no podía decir que era gay” \n
+  ^ En la antesala de sus 15 años, Darla Cristina González Arias, en ese entonces \n
+  ^ Cristian Camilo González, vio mientras jugaba en una cancha de San Luis \n
+  ^ (Antioquia) que guerrilleros del frente 9 de las Farc descendían de una \n
+  ^ camioneta y fijaban su mirada en él. “Yo estaba con dos amigos. \n
+  ^ Nos dijeron: ‘Nos vamos’. Subimos al carro, nos llevaron hasta Granada \n
+  ^ y caminamos más de 12 horas hasta una escuela de formación de la guerrilla. \n
+  ^ Ahí recibimos, durante cinco meses, entrenamiento militar sobre la ideología \n
+  ^ política de las Farc y el manejo de armas. Había restricciones en la comida,\n
+  ^ un tiempo para bañarnos y un día a la semana de descanso”, recuerda González. \n
+  ^ Aunque no le pusieron un revólver en la cabeza, reconoce que le \n
+  ^ “trabajaron mucho tiempo la cabeza. Las Farc eran el ejército del pueblo \n
+  ^ que nos enseñaba que la lucha era justa y por el campesinado”. Desde que es \n
+  ^ consciente, asegura que se sintió atraída por los hombres. En silencio, era \n
+  ^ un niño gay en el campo, “donde a todos les gustaban las niñas y yo creía que \n
+  ^ era el único con esas características ‘extrañas’”.
+
+  - Tanto los ilegales como la sociedad condenaban estas orientaciones. \n
+  ^ Cuando en el entrenamiento alguien mostraba signos de debilidad lo llamaban \n
+  ^ “marica”. “Eso era una forma prerrogativa de referirse al homosexualismo. \n
+  ^ A un chico del pueblo, que era profesor de danza y abiertamente gay, lo \n
+  ^ mataron y lo dejaron a la orilla del río, y todo el mundo decía que lo habían \n
+  ^ matado por ‘marica’, en una limpieza social. Siempre ha existido esa forma \n
+  ^ de justificación y victimización”.
+
+  - Cuando estaba listo para el combate, a Cristian le dieron la oportunidad \n
+  ^ de visitar a sus padres, pero pasó de largo y escapó a Cali (Valle), \n
+  ^ donde vivió en la calle por dos meses. Al desertar, las Farc le prohibieron \n
+  ^ a su familia salir del pueblo mientras se comprobaba que el menor no se \n
+  ^ hubiera aliado con el Eln, los paramilitares o el Ejército. \n
+  ^ Hasta que Cristian fue visto en un parque de Buenaventura (Valle), \n
+  ^ vendiendo Bon Ice en una esquina, sus padres y dos hermanas no vivieron \n
+  ^ sin la sombra de las Farc. Comprobar que “no estaba haciendo algo malo” \n
+  ^ constituyó sus boletos de libertad.
+
+  - Antes de cumplir 18 años, el joven se había desplazado por Pereira, \n
+  ^ Armenia, Manizales, Cartago y Bucaramanga, donde un día leyendo un \n
+  ^ periódico se encontró con un anuncio para adultos que solicitaban personal. \n
+  ^ Así terminó en una casa de prostitución y comenzaría a ejercer como \n
+  ^ trabajador sexual en la calle, hasta un lustro. Hoy, a sus 30 años y \n
+  ^ reconocida como mujer trans, Darla aspira al Concejo de Pasto y es la \n
+  ^ coordinadora de la Mesa de Participación Efectiva de Víctimas en Nariño.
+
+  - Ahora, desde su papel como defensora de derechos de las víctimas LGBTI \n
+  ^ y con siete amenazas en contra, afirma que pertenecer a esa comunidad \n
+  ^ sigue siendo un riesgo en las zonas de conflicto. “Muchas personas que \n
+  ^ aún viven en el campo siguen ocultando su identidad de género y orientación \n
+  ^ sexual por temor a represalias. Hay gente gay que se casa con heterosexuales \n
+  ^ y tienen hijos, porque desde el púlpito se enseña que lo normal es procrear. \n
+  ^ He conocido personas que han salido del clóset a los 30 años porque antes \n
+  ^ no podían, las mataban”.“Me tengo que restringir en la calle”
+
+  - La crueldad del conflicto golpeó por primera vez a la familia de Bryan Yuseth \n
+  ^ Archbold Valle cuando éste tenía 16 años. Su padre, quien vivía en Santa Marta \n
+  ^ y trabajaba como vigilante de seguridad en una lotería, fue asesinado \n
+  ^ junto a otros empleados por los Paisas. A la par, en Soledad (Atlántico), \n
+  ^ donde Archbold ha residido con su mamá, los LGBTI eran blanco de intimidaciones \n
+  ^ por medio de panfletos. Debido a esto, Bryan ocultó que era bisexual hasta \n
+  ^ los 19 años, cuando ingresó a la Universidad del Atlántico a estudiar \n
+  ^ sociología.
+
+  - “Las amenazas han sido firmadas por los Rastrojos, las Auc, siempre varía. \n
+  ^ Después de las 9:30 p.m. una persona LGBTI corre riesgo en la calle. \n
+  ^ Cuando estoy con mi pareja trato de no ser tan visible y actuar como \n
+  ^ los demás quieren que actúe. No me agarro de mano con mi novio y no nos \n
+  ^ besamos en público. Hace poco, a una trans la degollaron en un barrio \n
+  ^ cerca a mi casa frente a todo el mundo como a las 5:00 a.m.”, dice Archbold.
+
+
+  - Durante el 2008 y el 2009 se siguieron presentando hechos de violencia y \n
+  ^ discriminación por parte de actores armados a personas LGBTI, según lo \n
+  ^ informó la Oficina del Alto Comisionado de Naciones Unidas para los Derechos \n
+  ^ Humanos A. C. (2010): “Entre febrero y marzo circularon panfletos con amenazas \n
+  ^ en por lo menos 24 de los 32 departamentos del país. Un formato estándar \n
+  ^ fue distribuido en poco más de dos semanas, en lugares tan distantes como \n
+  ^ Armenia, Barranquilla, Bogotá, Choco, Cúcuta, Medellín y Valle del Cauca. \n
+  ^ El documento alentaba la mal llamada “limpieza social” contra trabajadores \n
+  ^ sexuales, homosexuales, drogadictos y personas viviendo con VIH, entre \n
+  ^ otros.”
+
+  - Uno de los panfletos que también circularon durante este periodo \n
+  ^ decía textualmente según Caballero (2009): “Señores Administradores: Este \n
+  ^ comunicado es con el fin de informarles que no queremos volver a ver maricas \n
+  ^ y prostitutas en la puerta de su negocio ni que les den servicio, si no \n
+  ^ cumplen esta orden en un tiempo límite de 3 días aténgacen (sic) a las \n
+  ^ consecuencias que recaerán sobre ustedes. Grupo de Limpieza Cazano”. \n
+  ^ Miembros de grupos paramilitares desmovilizados han amenazado a miembros \n
+  ^ de la población LGBTI por ejemplo “En Cúcuta, el 5 de septiembre, se reportó \n
+  ^ una amenaza contra las travestis que ejercen prostitución en la zona céntrica \n
+  ^ de la ciudad y su posteriormente el asesinato de tres de ellas” (Radio, 2010).
+
+  < topic
+
+
+
+  > topic reclutamiento
+
+  + [*] (otro tema) [*]   // esta frase será el password para salir del topic
+
+    - ok, pasemos a otro tema {topic=random}
+
+   + (vale|bueno|bien|parece|pregunta|opina|opinion)
+
+  - 16.879 niños han hecho parte del conflicto armado colombiano.\n
+  ^ Fuente: Centro Nacional de Memoria Histórica
+
+  - desde 1960, menores de edad colombianos \n
+  ^ han integrado las filas de los grupos armados -legales e ilegales- y \n
+  ^ han sido utilizados por estos para diversas labores.\n
+  ^ Fuente: informe Una guerra sin edad, CNMH
+
+
+  - Desde 1965 los grupos armados hacen incursiones en las escuelas,\n
+  ^ a pesar de la prohibición del Derecho Internacional Humanitario, \n
+  ^ porque son bienes protegidos, y desde la misma génesis de los grupos \n
+  ^ armados han ingresado niños.
+
+
+  - La mayoría de los casos están atravesados por una persuasión viciada.\n
+  ^ Eso tiene que ver con un aprovechamiento de las condiciones en las que están viviendo las personas. \n
+  ^ Hay una serie de carencias que tienen los niños y los adolescentes.\n
+
+
+  - Hay unas condiciones que se tejen alrededor del reclutamiento \n
+  ^ y no tienen que ver únicamente con la presencia o ausencia de un grupo armado en un territorio:\n
+  ^ pocas garantías de los derechos de los niños, poco acceso a la oferta educativa, dificultades a nivel familiar.\n CITAR
+  ^
+
+  + (cifras|periodicidad|recurrencia|periodicidad|recurrencia)
+
+  //Esto no haría referencia a cifras de periodicidad?
+
+  - Los grupos armados posdes movilización presionan\n
+  ^ a familias a las que les hacen préstamos gota a gota, \n
+  ^ no tienen con qué pagar y les dicen que entreguen a un niño.\n
+  ^ CITAR
+
+  - En algunos territorios se implementaron cuotas para la guerra,
+  ^ y se llevaban a los niños.\n
+  ^ También hay ocasiones en las que el grupo armado \n
+  ^ genera un grado de relación, que no está mediada por violencia física \n
+  ^ y la gente cree que sólo si hay violencia física el reclutamiento es forzado: el reclutamiento es forzado siempre,\n
+  ^ las condiciones en las que se da la modalidad son diferentes.^ CITAR
+
+  + (razones|por que|razon)
+  //+ (Para qué reclutan niños los grupos armados?)
+
+  - para ser combatientes, cocineros, rancheros, enfermeros, \n
+  ^ para hacer inteligencia, para que presten guardia, para que sean radio operadores.\n
+  ^ Han tenido funciones de todo tipo, incluso algunos de los adolescentes reportan haber sido \n
+  ^ comandantes de escuadra, que es la estructura más pequeña dentro de una guerrilla.
+
+  - Hay unas particularidades específicas en las formas como reclutan y hay unas diferencias por cada grupo armado. CITAR
+
+  + (cómo cuáles|cual|cuales) //Muy bueno, eso es lo que yo preguntaría
+
+  - Los grupos paramilitares inauguraron la modalidad de reclutamiento remunerado\n
+  ^ Las guerrillas ofrecen estudio, estabilidad, comida. \n
+  ^ Cada grupo maneja la persuasión de diferentes formas. Los grupos armados posdesmovilización, que siguen funcionando y,\n
+  ^ es una de las alertas del informe porque tiende al incremento del reclutamiento, \n
+  ^ reclutan a través del consumo de sustancias psicoactivas y del pago.\n
+  ^ Entran niños por días a cumplir una función, no necesitan ser combatientes todo el tiempo, \n
+  ^ contrario a las guerrillas que normalmente vincula a las personas por toda su vida. \n
+  ^ Esas particularidades dan cuenta del grupo armado y de la forma de funcionamiento en un periodo y en un territorio.
+
+
+  + (dónde|cuáles|zona|region|lugares|lugar|ubicacion|ubicaciones)
+
+  - donde hay presencia de grupos armados, donde hay disputas territoriales: el pacífico nariñense, \n
+  ^ Tumaco, el Cauca, Urabá antioqueño, Meta, Catatumbo.\n
+  ^ En las disputas de los territorios se empieza a entender que hay una intensificación del conflicto y del reclutamiento. CITAR, tal vez acompañar de cifras para darle contundencia al argumento?
+
+  + (medios|comunicación|cubrimiento|television|prensa)
+
+  - Esa cobertura estaba marcada por las funciones de los niños asociadas a la vida en filas, \n
+  ^ a ser un niño combatiente y no a esos niños que han sido gasolineros, mochileros, recaderos, \n
+  ^ que ayudan a proveer alimentos, normalmente eso no está presente en el cubrimiento \n
+  ^ porque eso no se entiende como reclutamiento, pero es una utilización. \n
+  ^ Es un reclutamiento entendido sin el contexto del conflicto armado, de sus variaciones, \n
+  ^ de la de los grupos armados en los territorios.
+
+
+  + (caracteristicas|tipos|formas|describir|descripcion)
+
+
+  - Los adolescentes y los niños han callado sus intereses, emociones, no son libres para tener una relación de pareja.\n
+  ^ Para algunos significó ocultar sus temores porque la vida en la guerra y en un grupo armado \n
+  ^ está marcada por la masculinidad, la virilidad, la fuerza, jamás puedes mostrar debilidad porque serías sospechoso. \n
+  ^ Son expuestos a consejos de guerra que se muestran como un ejercicio democrático. \n
+  ^ Algunos de ellos han sido expuestos a impactos físicos por el manejo de armas\n
+  ^ por las confrontaciones armadas, hay relatos de comandantes de grupos paramilitares sobre niños que murieron ahogados \n
+  ^ porque no sabían nadar. Situaciones que la memoria histórica y el país deben visibilizar.\n
+  ^ Fuente: CNMH
+
++ * // la primera respuesta del usuario puede ser..
+
+
+
+  - Cuando tenía 14 años recibí la primera comunión, fue en esa época en que mi
+  ^ pequeño paraíso se empezó a convertir en un gran infierno. Conocí el conflicto
+  ^ armado que hace muchos años existía en Colombia y que yo no conocía.
+  ^ La violencia empezó a entrar en nuestras vidas y todo nuestro territorio
+  ^ de la peor forma.
+
+  - En nuestro municipio habían cuatro grupos armados, el ELN, las FARC,
+  ^ los PARAMILITARES  y las fuerzas del estado que son ejército y policía.
+  ^ Esto porque San Luis es un camino  estratégico a otras regiones,
+  ^ habían confrontaciones muy fuertes, mejor dicho, ahí conocí cómo
+  ^ sonaban las balas y hubo combates en los que estuve yo sola con
+  ^ mis hermanas en la casa mi papá trabajando y lo único que yo
+  ^ intentaba era cubrir a mis hermanas, yo pensaba que sí yo las abrazaba
+  ^ no les pasaría nada.
+
+  - Como los diferentes actores armados pasaban por nuestras tierras
+  ^ y teníamos contacto directo o indirecto o voluntario o involuntario
+  ^ (porque nos pedían comida o insumos) Terminamos relacionados
+  ^ como colaboradores de los grupos, de hecho dividieron a los
+  ^ campesinos del pueblo en colaboradores de determinado grupo.
+  ^ Un día, después de un combate apareció un campesino de nuestra
+  ^ Vereda muerto. Cuando volvió la guerrilla nos dieron dos opciones.
+  ^ O nos unimos a los paramilitares o nos tenían que matar por temor
+  ^ a que soltaramos información a la policía.
+
+  - Fue una guerra inhumana, principalmente porque muchos en mi
+  ^ pueblo terminamos dentro de los grupos armados, terminamos
+  ^ peleando entre familiares.
+
+
+  - Te gustaria saber sobre datos puntuales del reclutamiento en colombia?
+
+  //juicio de guerra
+
+ + [*] (si|no) [*]
+* <star> == si => vamos a hablar de datos concretos
+.{topic=reclutamiento}
+* <star> == no => no answer
+- default, shouldn't happen answer
+
+  //donde  - destino familia Y cuál fue el destino de tu familia
+
+  - ellos mismos retuvieron a mi familia hasta que supieran dónde
+  ^ estaba yo porque el temor era que yo me hubiese ido al ejército
+  ^ a la policía oa los paramlitares. Viaje de Buenaventura a Cali,
+  ^ dodne me encontraron los bloques urbanos de las FARC. Me salvó
+  ^ que yo en ese momento trabajaba como vendedor ambulante y era
+  ^ responsable de mi hermana menor. Por eso no me mataron.
+
+//  lgbti
+
+   - el conflicto armado ha golpeado mucho a la población lgbt.
+  ^  Muchos grupos armados ponen panfletos y comunicaciones sobre
+   ^ amenazas y limpiezas sociales hacia la población lgbti Diciendo
+   ^ que deben salir del territorio en el menor tiempo posible porque
+   ^ no van a permitir que sigamos viviendo aquí. Si bien es cierto
+   ^ que Colombia dio un paso  gigante frente al tema de acabar el conflicto
+   ^ aún el conflicto está muy activo en este país
+
+//  que confeso?
+
+  - En el 2015, años después, yo me habia convertido en una lideresa de la
+  ^ comundiad lgbti en el conflicto. El  día de la madre de ese año mi madre
+  ^ fue a visitarme y me confeso algo que había guardado por muchos años
+
+-  Me contó que ella también fue víctima también de violencia sexual
+^ por los paramilitares en razón de que tenía un “hijo guerrillero”
+^ Cuando digo yo no fui yo la peor parte de todo este historial a cargo
+^ mi mamá que mi mamá tenga más del 50% de Navidad permanente para trabajar
+^ por daño psiquiatra y no supiste recién en 2015 y ahí yo tomo la decisión
+^ de decir definitivamente han sufrido el conflicto armado interno en contar
+^ su historia reconstruir la verdad
+
+
+  < topic
+
+< topic
+
+
+
+
+< topic
+
++ [*] (paramilitares|paramilitar|convivir|auc|paracos|paras|paramilitarismo) [*] // //cualquier palabra activa el tema
+
+- vamos a hablar de paramilitarismo.{topic=paramilitarismo}
+
+> topic paramilitarismo
+
+  // "otro tema" el algoritmo busca esta palabra para salir del topic //paramilitarismo
+  + [*] (otro tema) [*]   // esta frase será el password para salir del topic
+
+  - ok, pasemos a otro tema {topic=random} // esta es la respuesta cuando el usuario pone //“otro tema”, esa frase se puede modificar.
+
+  + (ok|vale|parece|pregunta|opina|opinion) // la primera respuesta del usuario puede ser..
+
+  - Aunque las Autodefensas Unidas de Colombia (AUC) se desmovilizaron \n
+^ entre 2003 y 2006 bajo el Gobierno del Álvaro Uribe en un proceso de  \n
+^ verdad, justicia y reparación, todavía falta mucho por saber.
+
+  - Conoce acerca del proceso de Justicia y paz?
+- Sabia que HH, que llegó a ser el paramilitar más temido del suroccidente  \n
+^ del país,cumplió una condena en Estados Unidos por coordinar  \n
+^ el envío de toneladas de cocaína a ese país, tambien se le acusa  \n
+^ de 3000 crimenes.fuente: semana.com
+
+- Ultimamente varios exparamilitares han intentado acogerse a la JEP.
+
+
+//Las preguntas cerradas con respuestas SI o NO, en este ejemplo:  Se //desmovilizaron los paramilitares?   - Conoce acerca del proceso de Justicia y paz? //sabia que exparamilitares han intentado //acogerse a la JEP?. Necesitan argumentos //(al menos 3) para seguir desarrollando la conversación. //Que pasa si el usuario //dice //no?
+
+// en caso de que el usuario diga NO
+
+  + no
+// estos son los argumentos que va a sugerir el programa
+
+- la ley de justicia y paz facilita procesos de reincorporacion a la vida civil de \n
+^ miembros de grupos armados al margen de la ley que se hayan \n
+^ desmovilizado individual o colectivamente, garantizando los derechos \n
+^ de las víctimas a la verdad, la justicia y la reparación integral.fuente: el
+^ tiempo
+
+- La Ley de Justicia y Paz permite conceder una pena alternativa por la
+^   contribución del beneficiario a la consecución de la paz nacional, por su  \n
+^ colaboración con la justicia, la verdad, la reparación integral a las      \n
+^ víctimas y su adecuada resocialización. fuente: el colombiano.com
+
+- La ley 975 de 2005 , aprobada por el Congreso el 22 de junio de 2005 y \n
+^ sancionada por el Presidente de la República un mes después, es el marco \n
+^ legal para juzgar los delitos atroces (como secuestro, genocidio, \n
+^ desaparición forzada o tortura) cometidos por guerrilleros y paramilitares que \n
+^ quieran dejar las armas y reinsertarse a la vida civil. fuente semana.com \n
+
+- Ley de Justicia y Paz ó Ley 975 de 2005 dentro de la Legislación de Colombia \n
+^ es un marco jurídico promovido por el gobierno de Álvaro Uribe y aprobada \n
+^ por el Congreso para facilitar el proceso de desmovilización de  \n
+^ paramilitares en Colombia. fuente wikipedia.com
+
+  + (como que|que) // ante la siguiente respuesta del //usuario
+
+- Naciones Unidas criticó el “escaso número de condenas” \n
+^ sobre violencia de genero en la desmovilizacion de los paramilitares, en \n
+^ comparación con el número de denuncias presentadas.Según datos \n
+^ oficiales, frente a 266.552 denuncias recibidas entre 2010 y 2013, sólo se \n
+^ habrían dictado 10.671 sentencias condenatorias. fuente:
+^ el colombiano.com
+
+  + (interesante|bueno|cuenteme|mas|ok|entiendo) // ante la siguiente respuesta del //usuario
+
+
+- Sabia que Don Mario explicó en W Radio que el paramilitarismo \n
+^ colaboró directamente
+^ con el expresidente Uribe: "Puedo decir que en el país se conformaron \n
+^ unos grupos de seguridad privada, y que los tuvieron al mando varias \n
+^ familias del país, entre esos la familia de los Uribe. Esto es lo que \n
+^ yo le he dicho a la justicia, no es que yo tenga prueba de hechos \n
+^ como tales”. fuente W radio
+
+  + [*] (auc) [*]
+
+- Las Autodefensas Unidas de Colombia (AUC)[1] es una organización paramilitar \n
+^ de autodefensa, que participa en el conflicto armado en Colombia, y uno de los \n
+^ grupos criminales que más víctimas ha dejado en el país.
+- En 2003 las Autodefensas Unidas de Colombia firman con el gobierno el Acuerdo de \n
+^ Ralito, tras lo cual 18 mil miembros de esa organización armada y sus comandantes \n
+^ cesan operaciones.
+
++ [*] (convivir) [*]
+- Las Cooperativas de Vigilancia y Seguridad Privada para la autodefensa  \n
+^ agraria  \n mayormente conocidas como Las CONVIVIR, fueron una serie de  \n
+^ grupos paramilitares regulados por el Estado, financiados por grandes  \n
+^ terratenientes y empresas privadas que, con asesoría de miembros del Ejército  \n
+^ y la Policía, se dedicaron a la autodefensa de los bienes y territorios pertenecientes  \n
+^ a quienes los financiaban fuente el espectador.com
+
+- Fueron ideadas y promulgadas por el senador y expresidente de la república \n
+^ Álvaro Uribe Vélez, en su época de gobernador de Antioquia. La reglamentación \n
+^ de las Convivir se realizó durante el gobierno de Ernesto Samper, pero sus \n
+^ repercusiones jamás fueron dimensionadas ni hicieron caso a la reglamentación \n
+^ que se les impuso.1 Hubo casi 700 asociaciones en Colombia. fuente eltiempo.com
+
+  + [*] (uribe) [*] //utilice estas estrellas para que cada vez que reconozca este palabra el algoritmo inicie un subtema
+
+- Sabía que Mancuso contó, por ejemplo, que se había reunido con Álvaro Uribe en \n
+^ su finca El Ubérrimo cuando era gobernador de Antioquia, es decir, \n
+^ entre 1995 y 1997. Dijo que los presentó un coronel de la Policía \n
+^ llamado Raúl Suárez, y que el oficial le había dicho que Uribe \n
+^ los apoyaba “en la lucha contra la subversión” fuente el espectador.com
+
+  + [*] (gobierno) [*]
+
+- Después del inacabado proceso de desmovilización de este grupo y sus \n
+^ aliados durante el gobierno de Alvaro Uribe, se está dando el rearme y \n
+^ activación de varias facciones de éstos, conocidos de manera genérica \n
+^ como las Águilas Negras. fuente el tiempo.com
+
+
++ [*] (fecha) [*]
+- Estamos en el 2019 y los paramilitares fueron fundados en los ochentas
+- Los paramilitares se fundaron en la decada del 80 fuente: wikipedia
+
++ [*] (principales|lideres|mancuso|cabecillas|salvatore) [*] //utilice estas estrellas y barras //para que cada vez que reconozca  cualquiera de estas palabras el algoritmo inicie un //subtema
+
+- En el mes de Julio del año 2004 los jefes Paramilitares Salvatore Mancuso\n
+^ Gómez, Ramón Isaza y Ernesto Baez fueron escucahados por politicos en el \n
+^ Congreso de la República de Colombia donde justificaron las masacres de \n
+^ millones de campesinos indefesos que supuestamente eran colaboradores, \n
+^ complices o aliados de las Guerrillas de las Farc-ep, ELN, EPL, M-19, \n
+^ Quntín Lame
+
+  + [*] (desmovilizacion) [*]
+
+- Con la llegada al poder de Álvaro Uribe se inicia la desmovilización  \n
+ ^ y desarme de 34 bloques de las Autodefensas Unidas de Colombia.  \n
+ ^ Comenzaría el proceso de Justicia y Paz con el que se busca la verdad,  \n
+ ^ justicia y reparación de las víctimas de los paramilitares. cita: el tiempo.com
+
+- Antes de concluido el proceso de desmovilización, comienzan a aparecer  \n         ^ estructuras armadas en zonas donde actuaban las autodefensas, fuertemente  \n
+^ vinculadas al narcotráfico y otras actividades delictivas. cita de: OEA
+
+ - Naciones Unidas criticó el “escaso número de condenas” \n
+^ sobre violencia de genero en la desmovilizacion de los paramilitares, en \n       ^ comparación con el número de denuncias presentadas.Según datos \n
+^ oficiales, frente a 266.552 denuncias recibidas entre 2010 y 2013, sólo se \n     ^  habrían dictado 10.671 sentencias condenatorias. fuente:
+^ el colombiano.com
+
+  + [*] (justicia|transicional) [*]
+
+- Naciones Unidas define justicia transicional como la respuesta a “los  \n
+^ problemas   derivados de un pasado de abusos a gran escala… a fin de servir a \n
+^ la justicia y lograr la reconciliación”.  fuente Naciones Unidas
+
+  + * // ante cualquier otra respuesta del usuario distinta a las que hemos anticipado
+  - prefiere hablar de desmovilizacion paramilitar o justicia transicional ?
+  - prefiere hablar de las AUC o de las CONVIVIR?
+  - prefiere seguir hablando de paramilitarismo o de otro tema? //password de salida
+
+< topic
